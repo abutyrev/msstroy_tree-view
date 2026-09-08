@@ -1,22 +1,28 @@
+import { reactive, ref } from 'vue'
 import type { TreeViewItem } from './types'
 
 type Id = TreeViewItem['id']
 
+type State = {
+  items: TreeViewItem[]
+}
 export default class TreeStore {
-  private _items: TreeViewItem[] = []
+  private _state = reactive<State>({
+    items: [],
+  })
 
   constructor(items: TreeViewItem[] = []) {
-    this._items = items
+    this._state.items = items
   }
 
   public get items() {
-    return [...this._items]
+    return this._state.items
   }
 
   private get _childrenMap() {
     const map = new Map<TreeViewItem['parent'], TreeViewItem[]>()
 
-    for (const item of this._items) {
+    for (const item of this.items) {
       if (item.parent !== null) {
         if (!map.has(item.parent)) {
           map.set(item.parent, [])
@@ -29,16 +35,16 @@ export default class TreeStore {
   }
 
   public getAll() {
-    return this._items.map((i) => ({ ...i }))
+    return this.items
   }
 
   public getItem(id: Id) {
-    const item = this._items.find((i) => i.id === id)
-    return item ? { ...item } : null
+    const item = this.items.find((i) => i.id === id)
+    return item ?? null
   }
 
   public getChildren(id: Id) {
-    return this._items.filter((i) => i.parent === id)
+    return this.items.filter((i) => i.parent === id)
   }
 
   public getAllChildren(id: Id) {
@@ -59,7 +65,7 @@ export default class TreeStore {
 
   public getAllParents(id: Id) {
     const map = new Map<Id, TreeViewItem>()
-    for (const item of this._items) {
+    for (const item of this.items) {
       map.set(item.id, item)
     }
 
@@ -81,23 +87,23 @@ export default class TreeStore {
     return [{ ...map.get(id) }, ...parents.map((i) => ({ ...i }))]
   }
 
-  public setItem(items: TreeViewItem[]) {
-    this._items = items
+  public setItems(items: TreeViewItem[]) {
+    this._state.items = items
   }
 
   public addItem(item: TreeViewItem) {
-    this._items.push(item)
+    this._state.items.push(item)
   }
 
   public removeItem(id: Id) {
     const targetIds = [id, this.getAllChildren(id).map((i) => i.id)]
-    this._items = this._items.filter((i) => !targetIds.includes(i.id))
+    this._state.items = this._state.items.filter((i) => !targetIds.includes(i.id))
   }
 
   public updateItem(item: TreeViewItem) {
-    const index = this._items.findIndex((i) => i.id === item.id)
+    const index = this.items.findIndex((i) => i.id === item.id)
     if (index !== -1) {
-      this._items[index] = item
+      this._state.items[index] = item
     }
   }
 }
