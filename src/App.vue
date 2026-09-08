@@ -21,9 +21,9 @@ const onLoad = async () => {
 
 <template>
   <header>
-    <button :disabled="loading" @click="onLoad">Загрузить</button>
+    <button data-testid="loading-btn" :disabled="loading" @click="onLoad">Загрузить</button>
   </header>
   <main style="flex: 1; margin-top: 10px;">
-    <tree-view-table :items="items" :loading="loading" />
+    <tree-view-table data-testid="grid-table" :items="items" :loading="loading" />
   </main>
 </template>
