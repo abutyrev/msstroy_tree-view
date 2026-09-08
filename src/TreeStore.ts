@@ -50,14 +50,23 @@ export default class TreeStore {
   public getAllChildren(id: Id) {
     const allChildren: TreeViewItem[] = []
 
-    const targetItems = [...(this._childrenMap.get(id) ?? [])]
+    const queue = [...(this._childrenMap.get(id) ?? [])]
+    let queuePointer = 0
 
-    for (const item of targetItems) {
-      allChildren.push({ ...item })
-      const itemChildren = this._childrenMap.get(item.id)
-      if (itemChildren) {
-        allChildren.push(...itemChildren.map((i) => ({ ...i })))
+    while (queuePointer < queue.length) {
+      const currentChild = queue[queuePointer]
+
+      if (currentChild) {
+        allChildren.push(currentChild)
+
+        const nextLevelChildren = this._childrenMap.get(currentChild.id)
+
+        if (nextLevelChildren) {
+          queue.push(...nextLevelChildren)
+        }
       }
+
+      queuePointer++
     }
 
     return allChildren
@@ -84,7 +93,7 @@ export default class TreeStore {
       }
     }
 
-    return [{ ...map.get(id) }, ...parents.map((i) => ({ ...i }))]
+    return [map.get(id), ...parents]
   }
 
   public setItems(items: TreeViewItem[]) {

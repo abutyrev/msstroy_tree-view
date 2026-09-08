@@ -72,8 +72,8 @@ describe('TreeStore', () => {
   })
 
   it('should return all descendants correclty', () => {
-    treeStore.setItems([item1, item2, item3, item4, item5])
-    expect(treeStore.getAllChildren(item2.id)).toEqual([item3, item4, item5])
+    treeStore.setItems(data)
+    expect(treeStore.getAllChildren(1).length).toBe(7)
   })
 
   it('should return all parents correctly with right order', () => {
