@@ -1,11 +1,29 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue';
+import { getItems } from './api.ts';
+import TreeViewTable from './components/TreeViewTable.vue';
+import type { TreeViewItem } from './types.ts';
+
+const items = ref<TreeViewItem[]>([])
+const loading = ref(false)
+
+const onLoad = async () => {
+  loading.value = true
+  try {
+    const data = await getItems()
+    items.value = data
+  } finally {
+    loading.value = false
+  }
+}
+
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <header>
+    <button :disabled="loading" @click="onLoad">Загрузить</button>
+  </header>
+  <main style="flex: 1; margin-top: 10px;">
+    <tree-view-table :items="items" :loading="loading" />
+  </main>
 </template>
-
-<style scoped></style>
