@@ -96,7 +96,7 @@ export default class TreeStore {
   }
 
   public removeItem(id: Id) {
-    const targetIds = [id, this.getAllChildren(id).map((i) => i.id)]
+    const targetIds = [id, ...this.getAllChildren(id).map((i) => i.id)]
     this._state.items = this._state.items.filter((i) => !targetIds.includes(i.id))
   }
 
