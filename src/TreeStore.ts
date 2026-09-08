@@ -1,4 +1,4 @@
-import { reactive, ref } from 'vue'
+import { reactive } from 'vue'
 import type { TreeViewItem } from './types'
 
 type Id = TreeViewItem['id']
